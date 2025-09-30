@@ -2,6 +2,7 @@ import { htmlTemplate } from './template'
 import type { LanguageOption, Parser } from './index'
 import type * as HtmlEslintParser from '@html-eslint/parser'
 import type * as Htmlparser2 from 'htmlparser2'
+import type * as NodeHtmlParser from 'node-html-parser'
 import type * as Rehype from 'rehype'
 import type * as Ultrahtml from 'ultrahtml'
 
@@ -108,9 +109,52 @@ const ultrahtmlParser: Parser<typeof Ultrahtml> = {
   hideKeys: ['parent'],
 }
 
+const nodeHtmlParser: Parser<typeof NodeHtmlParser, NodeHtmlParser.Options> = {
+  id: 'node-html-parser',
+  label: 'node-html-parser',
+  icon: 'i-vscode-icons:file-type-html',
+  link: 'https://github.com/taoqf/node-html-parser',
+  editorLanguage: 'html',
+  options: {
+    configurable: true,
+    defaultValue: `return { comment: true }`,
+    editorLanguage: 'javascript',
+    defaultValueType: 'javascript',
+  },
+  pkgName: 'node-html-parser',
+  parse(code, options) {
+    return this.parse(code, options)
+  },
+  valueHint(key, value) {
+    if (key !== 'nodeType') return
+    switch (value) {
+      case this.NodeType.ELEMENT_NODE: {
+        return 'ELEMENT_NODE'
+      }
+      case this.NodeType.TEXT_NODE: {
+        return 'TEXT_NODE'
+      }
+      case this.NodeType.COMMENT_NODE: {
+        return 'COMMENT_NODE'
+      }
+      default: {
+        return `NodeType.${value}`
+      }
+    }
+  },
+  getNodeLocation: genGetNodeLocation('nodeHtmlParser'),
+  hideKeys: ['_parseOptions', '_rawText', 'classList', 'parentNode', 'voidTag'],
+}
+
 export const html: LanguageOption = {
   label: 'HTML',
   icon: 'i-vscode-icons:file-type-html',
-  parsers: [htmlparser2, rehypeAst, htmlEslintParser, ultrahtmlParser],
+  parsers: [
+    htmlparser2,
+    rehypeAst,
+    htmlEslintParser,
+    ultrahtmlParser,
+    nodeHtmlParser,
+  ],
   codeTemplate: htmlTemplate,
 }

@@ -63,6 +63,11 @@ const nodeLocationFields = {
     start: ['loc', '0', 'start'],
     end: ['loc', '1', 'end'],
   },
+  nodeHtmlParser: {
+    type: ['nodeType'],
+    start: ['range', 0],
+    end: ['range', 1],
+  },
 } as const
 
 export function genGetNodeLocation(
